@@ -41,109 +41,101 @@ namespace HashBattleTest
 
 
         [Fact]
-        public void Test()
+        public void TestBattle()
         {
-            StartBattleTest();
-            Player1EnterGameTest();
-            Player2EnterGameTest();
-            Player3EnterGameTest();
-            Player4EnterGameTest();
-            Player1EndGameTest();
-            Player2EndGameTest();
-            Player3EndGameTest();
-            Player4EndGameTest();
-            GetGameWinnerTest();
+            Arena arena = StartBattleTest();
+            Player1EnterGameTest(arena);
+            Player2EnterGameTest(arena);
+            Player3EnterGameTest(arena);
+            Player4EnterGameTest(arena);
+            Player1EndGameTest(arena);
+            Player2EndGameTest(arena);
+            Player3EndGameTest(arena);
+            Player4EndGameTest(arena);
+            GetGameWinnerTest(arena);
         }
 
-        private void StartBattleTest()
+        private Arena StartBattleTest()
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
             Arena arena = new Arena(this.mockContractState.Object);
             arena.StartBattle(1, 4, 1);
 
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleMain>($"battle:{1}")));
+            return arena;
         }
 
-        private void Player1EnterGameTest()
+        private void Player1EnterGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.playerAddress1, 1));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EnterBattle(1, 0);
 
             Assert.Equal(this.playerAddress1, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress1}").Address);
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleMain>($"battle:{1}")));
         }
 
-        private void Player2EnterGameTest()
+        private void Player2EnterGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.playerAddress2, 1));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EnterBattle(1, 1);
 
             Assert.Equal(this.playerAddress2, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress2}").Address);
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleMain>($"battle:{1}")));
         }
 
-        private void Player3EnterGameTest()
+        private void Player3EnterGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.playerAddress3, 1));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EnterBattle(1, 2);
 
             Assert.Equal(this.playerAddress3, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress3}").Address);
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleMain>($"battle:{1}")));
         }
 
-        private void Player4EnterGameTest()
+        private void Player4EnterGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.playerAddress4, 1));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EnterBattle(1, 3);
 
             Assert.Equal(this.playerAddress4, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress4}").Address);
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleMain>($"battle:{1}")));
         }
 
-        private void Player1EndGameTest()
+        private void Player1EndGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EndBattle(this.playerAddress1, 1, 10, false);
 
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress1}")));
         }
 
-        private void Player2EndGameTest()
+        private void Player2EndGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EndBattle(this.playerAddress2, 1, 20, false);
 
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress2}")));
         }
 
-        private void Player3EndGameTest()
+        private void Player3EndGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EndBattle(this.playerAddress3, 1, 30, false);
 
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress3}")));
         }
 
-        private void Player4EndGameTest()
+        private void Player4EndGameTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
-            Arena arena = new Arena(this.mockContractState.Object);
             arena.EndBattle(this.playerAddress4, 1, 40, true);
 
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleUser>($"user:{1}:{this.playerAddress4}")));
         }
 
-        private void GetGameWinnerTest()
+        private void GetGameWinnerTest(Arena arena)
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
-            Arena arena = new Arena(this.mockContractState.Object);
             Address winner = arena.GetWinner(1);
 
             Assert.Equal(this.playerAddress4, winner);
