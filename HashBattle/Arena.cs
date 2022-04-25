@@ -25,15 +25,15 @@ public class Arena : SmartContract
     /// <summary>
     /// Battle owner will start the battle
     /// </summary>
-    public bool StartBattle(ulong battleId, uint maxUsers, ulong fee)
+    public bool StartBattle(ulong battleId, ulong fee)
     {
         Assert(Message.Sender == BattleOwner, "Only battle owner can start game.");
 
         var battle = new BattleMain();
         battle.BattleId = battleId;
-        battle.MaxUsers = maxUsers;
+        battle.MaxUsers = 4;
         battle.Fee = fee;
-        battle.Users = new Address[maxUsers];
+        battle.Users = new Address[battle.MaxUsers];
         SetBattle(battleId, battle);
 
         Log(battle);
@@ -108,11 +108,14 @@ public class Arena : SmartContract
     /// </summary>
     private void ProcessWinner(BattleMain battle)
     {
-        foreach (Address userAddress in battle.Users)
+        if (battle.Users.Length <= 4)
         {
-            var user = GetUser(battle.BattleId, userAddress);
-            if (!user.ScoreSubmitted)
-                return;
+            foreach (Address userAddress in battle.Users)
+            {
+                var user = GetUser(battle.BattleId, userAddress);
+                if (!user.ScoreSubmitted)
+                    return;
+            }
         }
         uint winnerIndex = GetWinnerIndex(battle.BattleId, battle.Users);
         if (battle.Winner == Address.Zero)
