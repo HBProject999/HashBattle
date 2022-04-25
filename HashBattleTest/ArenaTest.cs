@@ -59,7 +59,7 @@ namespace HashBattleTest
         {
             this.mockContractState.Setup(m => m.Message).Returns(new Message(this.contract, this.ownerAddress, 0));
             Arena arena = new Arena(this.mockContractState.Object);
-            arena.StartBattle(1, 4, 1);
+            arena.StartBattle(1, 1);
 
             this.mockContractLogger.Verify(m => m.Log(this.mockContractState.Object, state.GetStruct<BattleMain>($"battle:{1}")));
             return arena;
